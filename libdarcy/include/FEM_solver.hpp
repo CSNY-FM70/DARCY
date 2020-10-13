@@ -2,30 +2,31 @@
 #include "linear_system.hpp"
 #include "linear_solver.hpp"
 #include <Eigen/Dense>
+#include <Eigen/SparseCore>
+#include <Eigen/IterativeLinearSolvers>
 
 #pragma once
 
 namespace FEM {
-/**
-* @brief FEM System Solver
-* @details This class aims to solve the FEM System using a linear solver from Linear::Solver class
-* @tparam T Base type for solution precision
-* @tparam K Number of 1D-gridpoints in discretized system
-*/
 
+/**
+* @brief This class aims to solve the FEM System using a Conjugate Gradient Solver.
+* @tparam T Base type to be used for computations.
+* @tparam K Number of 1D-gridpoints in discretized system.
+*/
 template<typename T,int K>
 class Solver{
 private:
-	typename Linear::Solver<T,(K-1)*(K+1)>& _lsolver;
+	Eigen::ConjugateGradient<Eigen::SparseMatrix<T>,Eigen::Lower|Eigen::Upper> CG;
 public:
 	/**
-	* @brief Solver Constructor
-	* @param lsolver Linear solver 
+	* @brief Solver Constructor.
 	*/
-	Solver(Linear::Solver<T,(K-1)*(K+1)>&);
+	Solver();
+
 	/**
-	* @brief solve Solves Galerkin System
-	* @param femsys An object of type FEM::System to be solved
+	* @brief solve Solves discretized system.
+	* @param femsys An object of type FEM system to be solved.
 	*/
 	void solve(System<T,K>&);
 };
