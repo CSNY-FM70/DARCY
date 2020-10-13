@@ -1,7 +1,10 @@
 # DARCY
 2D Darcy-Pressure Problem 
+	
 	div(a(x)grad(p(x)) = f(x) 
-	              p(x) = g(x)	on left and right boundary
+	              
+		      p(x) = g(x)	on left and right boundary
+	      
 	      n*grad(p(x)) = 0		on uper and lower boundary
 
 Libraries used:
