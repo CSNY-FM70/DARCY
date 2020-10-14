@@ -3,7 +3,6 @@
 #include <Eigen/Dense>
 
 #include "darcy_system_test.hpp"
-#include "linear_solver_qr.hpp"
 #include "FEM_system.hpp"
 #include "FEM_solver.hpp"
 
@@ -15,12 +14,11 @@ struct static_for{
 		Darcy_Test::System<T> dsys_ns(boundary);
 		Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> perm = Eigen::Matrix<T,x+1,x+1>::Constant(1);
 		FEM::System<T,x> fsys(perm,dsys_ns);
-		Linear::Solver_QR<T,(x-1)*(x+1)> lsol;
-		FEM::Solver<T,x> fsol(lsol);
+		FEM::Solver<T,x> fsol;
 		fsys.setup();
 		fsol.solve(fsys);
-		std::cout << "A_int \n" << fsys.get_A() << "\n\n";
-		std::cout << "Drhs \n" << fsys.get_b() << "\n\n";
+		//std::cout << "A_int \n" << fsys.get_A() << "\n\n";
+		//std::cout << "Drhs \n" << fsys.get_b() << "\n\n";
 		std::cout << "Solution for K= " << x << "\n" << fsys.get_p() << "\n\n";
 		
 		static_for<T,x+1,to>()();
