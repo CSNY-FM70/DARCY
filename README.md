@@ -1,5 +1,5 @@
 # DARCY
-2D Darcy-Pressure Problem 
+Darcy-Pressure Problem  - Models a unilateral Groundwater Flow in a rectangular 2D-Domain. Numerically solved using a Finite Element approach. Soil permeability -a(x)- is currently only a simple Eigen::Random matrix.
 	
 	div(a(x)grad(p(x)) = f(x) 
 	              
@@ -13,7 +13,7 @@ Libraries used:
 
 Persisting Issues:
 
-	- Optimize nodes & triplets search -> first hard coded ooptimization *then* use OpenMP
+	- Optimize nodes & triplets search -> first hard code optimization *then* use OpenMP
 	- Make the complete Galerkin Matrix Sparse
 
 To be implemented:
@@ -22,3 +22,5 @@ To be implemented:
 	- Inhouse Conjugate Gradient solver (or at least create abstract class of Linear::Solvers s.t. one can choose the desired iterative solver) 
 
 	- CMake Build infrastructure (currently local Make files using GNU c++ compiler)
+
+	- Testing units -> Use Google testing suit or Catch2
