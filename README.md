@@ -9,7 +9,7 @@ Darcy-Pressure Problem  - Models a unilateral Groundwater Flow in a rectangular 
 
 Libraries used:
 
-	- Eigen
+	- Eigen (More information - https://eigen.tuxfamily.org/ )
 
 Persisting Issues:
 
