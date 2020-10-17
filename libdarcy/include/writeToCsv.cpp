@@ -9,9 +9,9 @@ void printMatrixToCsv(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& M,
     std::ofstream stream;
     stream.open(fileName);
     for (int i = 0; i < M.rows(); i++) {
-        for (int j = 0; j < M.cols(); j++) {
-            stream << M(i,j) << ",";
-        }
+        for (int j = 0; j < M.cols()-1; j++) {
+            stream << M(i, j) << ",";
+        }stream << M(i, M.cols() - 1);
         stream << "\n";
     }
 }
