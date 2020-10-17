@@ -69,6 +69,12 @@ public:
 	* @return b A vector containing information regarding the RHS and boundary data for each grid element.
 	*/
 	typename Darcy::System<T>::VT& get_b();
+
+	/**
+	* @brief Permeability Matrix
+	* @return PM Matrix containing information regarding soil permeability
+	*/
+	typename Darcy::System<T>::MT& get_PM();
 };
 
 }
