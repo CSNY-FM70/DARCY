@@ -36,7 +36,7 @@ int main(int argc, const char* argv[]) {
 	femsol.solve(femsys_well);
 
 	//Data for 2D Heatmaps
-	Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> temp_solution = fsys.get_p();
+	Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> temp_solution = femsys_well.get_p();
 	temp_solution.resize(gridpoints + 1, gridpoints + 1);
 	Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> solution = temp_solution.transpose();
 	printMatrixToCsv<T>(solution, "solution_well.csv");
