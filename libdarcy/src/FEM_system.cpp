@@ -93,7 +93,7 @@ void System<T,K>::setup(){
 	for(int i=0;i<ne;i++){
 		T sum = PM(elt2vert.at(i).at(0)-1)+PM(elt2vert.at(i).at(1)-1)+PM(elt2vert.at(i).at(2)-1);
 		const_a.at(i) = (1.0/3.0)*sum;
-	}
+	}PM.resize(ns + 1, ns + 1);
 	/*std::cout << "Const a() \n";
 	for(size_t i=0;i<ne;i++)std::cout << const_a.at(i) << std::endl;
 	std::cout << std::endl;*/
@@ -248,6 +248,7 @@ template<typename T,int K>
 void System<T,K>::field_to_perm(typename Darcy::System<T>::MT& _field) {
 	//TODO -> Check Book
 	PM = exp(_field.array());
+	std::cout << "Permeability Check \n" << PM << "\n\n";
 	//PM = _field;
 }
 
@@ -264,6 +265,11 @@ template<typename T,int K>
 template<typename T, int K>
 typename Darcy::System<T>::VT& System<T,K>::get_b(){
 	return System_RHS;
+}
+
+template<typename T,int K>
+typename Dary::System<T>::MT& System<T, K>::get_PM() {
+	return PM;
 }
 
 }

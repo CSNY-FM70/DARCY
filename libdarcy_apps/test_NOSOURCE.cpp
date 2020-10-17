@@ -19,9 +19,8 @@ int main(int argc,char* argv[]) {
 	//std::cout <<"Perm \n"<< perm << "\n\n";
 	Darcy_No_Source::System<T> dsys_ns(boundary);
 	//FEM::System<T,K> fsys(perm, dsys_ns);
-	FEM::System<T,K> fsys(dsys_ns);
+	FEM::System<T,K> fsys(perm,dsys_ns);
 	FEM::Solver<T,K> fsol;
-	fsys.field_to_perm(perm);
 	fsys.setup();
 	fsol.solve(fsys);
 	
