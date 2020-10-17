@@ -268,7 +268,7 @@ typename Darcy::System<T>::VT& System<T,K>::get_b(){
 }
 
 template<typename T,int K>
-typename Dary::System<T>::MT& System<T, K>::get_PM() {
+typename Darcy::System<T>::MT& System<T, K>::get_PM() {
 	return PM;
 }
 
