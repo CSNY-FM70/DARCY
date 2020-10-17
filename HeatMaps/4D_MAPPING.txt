@@ -1,0 +1,32 @@
+set terminal pngcairo enhanced font "arial,18" fontscale 1.0 size 1200, 800 
+set output '4D_MAP.png'
+set format cb "%4.1f" 
+set view 49, 28, 1, 1.48
+set samples 25, 25
+set isosamples 50, 50
+set xyplane relative 0
+set cbtics border in scale 0,0 mirror norotate  autojustify
+set title "4D data \nPermeability color-mapped onto Darcy-Pressure" 
+set title  offset character 0, 1, 0 font "" textcolor lt -1 norotate
+set urange [ * : * ] noreverse nowriteback
+set vrange [ * : * ] noreverse nowriteback
+set xlabel "x" 
+set xlabel  offset character 3, 0, 0 font "" textcolor lt -1 norotate
+set xrange [ * : * ] noreverse writeback
+set x2range [ * : * ] noreverse writeback
+set ylabel "y" 
+set ylabel  offset character -5, 0, 0 font "" textcolor lt -1 rotate
+set yrange [ * : * ] noreverse writeback
+set y2range [ * : * ] noreverse writeback
+set zlabel "Darcy-Pressure" 
+set zlabel  offset character 0, 0, 0 font "" textcolor lt -1 rotate
+set zrange [ * : * ] noreverse writeback
+set cbrange [ * : * ] noreverse writeback
+set rrange [ * : * ] noreverse writeback
+set pm3d implicit at s
+set colorbox user
+set colorbox vertical origin screen 0.9, 0.2 size screen 0.03, 0.6 front  noborder
+NO_ANIMATION = 1
+set palette defined (0 0 0 0.5, 1 0 0 1, 2 0 0.5 1, 3 0 1 1, 4 0.5 1 0.5, 5 1 1 0, 6 1 0.5 0, 7 1 0 0, 8 0.5 0 0)
+## Last datafile plotted: "++"
+splot '4DMapping.dat' using 1:2:3:4 with pm3d notitle
