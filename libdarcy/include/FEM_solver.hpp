@@ -1,6 +1,4 @@
 #include "FEM_system.hpp"
-#include "linear_system.hpp"
-#include "linear_solver.hpp"
 #include <Eigen/Dense>
 #include <Eigen/SparseCore>
 #include <Eigen/IterativeLinearSolvers>
