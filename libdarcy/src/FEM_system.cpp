@@ -74,7 +74,6 @@ template<typename T,int K>
 void System<T,K>::setup(){
 	const int ns = K;
 	const int nvtx=(ns+1)*(ns+1), ne=2*ns*ns;
-	std::cout << "ns = " << ns << std::endl;
 	T h=1.0/ns;
 	std::vector<T> xv, yv;
 	std::vector<std::vector<int>> elt2vert;
@@ -247,8 +246,9 @@ void System<T,K>::setup(){
 template<typename T,int K>
 void System<T,K>::field_to_perm(typename Darcy::System<T>::MT& _field) {
 	//TODO -> Check Book
-	PM = exp(_field.array());
-	std::cout << "Permeability Check \n" << PM << "\n\n";
+	PM = (exp(_field.array())).matrix();
+	//PM = _field;
+	//std::cout << "Permeability Check \n" << PM << "\n\n";
 	//PM = _field;
 }
 
