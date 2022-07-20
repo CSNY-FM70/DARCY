@@ -40,10 +40,10 @@ int main(int argc, const char* argv[]) {
 		GRF::Generator<T> generator_well(gridpoints, dsys_well, deterministic);
 		
 		generator_well.generate_field();
-		Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> PM = generator_well.get_field();
-		femsys_well.field_to_perm(PM);
+		Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> random_sample = generator_well.get_field();
+		femsys_well.field_to_perm(random_sample);
 		femsys_well.setup();
-		femsol.solve(femsys_well)
+		femsol.solve(femsys_well);
 
 		const int nvtx = gridpoints*gridpoints;
 
