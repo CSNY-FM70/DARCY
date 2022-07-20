@@ -2,11 +2,10 @@
 Darcy-Pressure Problem  - Models a unilateral Groundwater Flow in a rectangular 2D-Domain. Numerically solved using a Finite Element approach for a generated soil permeability  field a(x).
 
 
-<img src="https://render.githubusercontent.com/render/math?math={\nabla\dot(a(x)\nabla(p(x)) = f(x)}#gh-light-mode-only">
-<img src="https://render.githubusercontent.com/render/math?math={\color{white}\nabla\dot(a(x)\nabla(p(x)) = f(x)}#gh-dark-mode-only">
+<img src="https://render.githubusercontent.com/render/math?math={\div(a(x)\nabla(p(x)) = f(x)}#gh-light-mode-only">
+<img src="https://render.githubusercontent.com/render/math?math={\color{white}\div(a(x)\nabla(p(x)) = f(x)}#gh-dark-mode-only">
 
-<img src="https://render.githubusercontent.com/render/math?math={\L = -\sum_{j}[T_{j}ln(O_{j})] + \frac{\lambda W_{ij}^{2}}{2} \rightarrow \text{one-hot} \rightarrow -ln(O_{c}) + \frac{\lambda W_{ij}^{2}}{2}}#gh-light-mode-only">
-<img src="https://render.githubusercontent.com/render/math?math={\color{white}\L = -\sum_{j}[T_{j}ln(O_{j})] + \frac{\lambda W_{ij}^{2}}{2} \rightarrow \text{one-hot} \rightarrow -ln(O_{c}) + \frac{\lambda W_{ij}^{2}}{2}}#gh-dark-mode-only">
+
 
 	\nabla\dot(a(x)\nabla(p(x)) = f(x) 
 	              
