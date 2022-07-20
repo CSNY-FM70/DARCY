@@ -1,18 +1,18 @@
 # DARCY
-Darcy-Pressure Problem  - Models a unilateral Groundwater Flow in a rectangular 2D-Domain. Numerically solved using a Finite Element approach for a generated soil permeability  field a(x).
+Darcy-Pressure Problem  - Models a unilateral Groundwater Flow in a rectangular 2D-Domain for a soil permeability  field a(x). 
+Let $$\Omega$$ denote the integration domain and $$\partial \Omega$$ denote the domain boundary, which is segmented in left and right boundary $$\Gamma_0$$
+and in the upper and lower boundary $$\Gamma_1$$ for the Neumann boundary condition. where $$\eta$$ is the normal vecor w.r.t. the respective boundary.
 
 
-$$\nabla\cdot(a(x)\nabla p(x)) = f(x)$$ 
+$$\nabla\cdot(a(x)\nabla p(x)) = f(x) \quad for x\in\Omega$$ 
 	              
-$$p(x) = g(x)$$	on left and right boundary
+$$p(x) = g(x) \quad for x\in\Gamma_0$$
 	      
-$$\eta\cdot\nabla p(x) = 0$$	on uper and lower boundary
+$$\eta\cdot\nabla p(x) = 0 \quad for x\in\Gamma_1$$
 
 Pressure distribution over 2D domain and permeability field color-mapped on top.
 
 ![Pressure4D](/libdarcy_apps/4D_MAP.png)
-
-
 
 Libraries used:
 
