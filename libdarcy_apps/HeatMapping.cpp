@@ -49,7 +49,7 @@ int main(int argc, const char* argv[]) {
 
 		Eigen::Matrix<T, Eigen::Dynamic, 1> Sol = femsys_well.get_p();
 		Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> PM = femsys_well.get_PM();
-		PM.resize(nvtx, 1)
+		PM.resize(nvtx, 1);
 
 		//Data for 3D Heatmaps
 		std::cout << "Writing Data for 4D Heatmap\n";
