@@ -9,8 +9,6 @@ int main(int argc, const char* argv[]) {
 	assert(argc == 5 && "Insert sigma(0.01-2),jet(-100 - 100) and l(0.1-0.9)->cov(r,l),Gridpoints(10-200)");
 	try {
 		using T = double;
-		if (atoi(argv[1]) < 1)
-			throw std::runtime_error("number of samples must be positive!");
 		// 1. Create Darcy system boundaries and then the system
 		// 2. Create the linear solver, FEM system and FEM solver
 		// 3. Create the generator
