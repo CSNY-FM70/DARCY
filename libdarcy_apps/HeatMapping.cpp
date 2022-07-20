@@ -44,9 +44,11 @@ int main(int argc, const char* argv[]) {
 		sampler_well.sample();
 		std::cout << "Successfully finished Monte Carlo sampling\n" << std::endl;
 
+		nvtx = (gridpoints+1.0)*(gridpoints + 1.0)
 		Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> Sol = sampler_well.get_mean();
+		Sol.resize(nvtx,1)
 		Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> PM = femsys_well.get_PM();
-
+		PM.resize(nvtx,1)
 		//Data for 3D Heatmaps
 		std::cout << "Writing Data for 4D Heatmap\n";
 		print_to_dat<T>(gridpoints+1,Sol, PM, "4DMapping.dat");
