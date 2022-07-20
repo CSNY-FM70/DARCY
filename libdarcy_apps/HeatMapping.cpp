@@ -44,8 +44,8 @@ int main(int argc, const char* argv[]) {
 		sampler_well.sample();
 		std::cout << "Successfully finished Monte Carlo sampling\n" << std::endl;
 
-		Eigen::Matrix<T, Eigen::Dynamic, 1> Sol = sampler_well.get_mean();
-		Eigen::Matrix<T, Eigen::Dynamic, 1> PM = femsys_well.get_PM();
+		Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> Sol = sampler_well.get_mean();
+		Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> PM = femsys_well.get_PM();
 
 		//Data for 3D Heatmaps
 		std::cout << "Writing Data for 4D Heatmap\n";
