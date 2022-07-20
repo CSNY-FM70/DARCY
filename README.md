@@ -1,6 +1,9 @@
 # DARCY
-Darcy-Pressure Problem  - Models a unilateral Groundwater Flow in a rectangular 2D-Domain. Numerically solved using a Finite Element approach. Soil permeability -a(x)- is currently only a simple Eigen::Random matrix.
+Darcy-Pressure Problem  - Models a unilateral Groundwater Flow in a rectangular 2D-Domain. Numerically solved using a Finite Element approach for a generated soil permeability  field a(x).
 
+
+<img src="https://render.githubusercontent.com/render/math?math={\nabla\dot(a(x)\nabla(p(x)) = f(x)}#gh-light-mode-only">
+<img src="https://render.githubusercontent.com/render/math?math={\color{white}\nabla\dot(a(x)\nabla(p(x)) = f(x)}#gh-dark-mode-only">
 ```math
 	\nabla\dot(a(x)\nabla(p(x)) = f(x) 
 	              
