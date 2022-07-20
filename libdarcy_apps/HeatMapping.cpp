@@ -49,7 +49,7 @@ int main(int argc, const char* argv[]) {
 
 		//Data for 3D Heatmaps
 		std::cout << "Writing Data for 4D Heatmap\n";
-		printToDat<T>(gridpoints+1,Sol, PM, "4DMapping.dat");
+		print_to_dat<T>(gridpoints+1,Sol, PM, "4DMapping.dat");
 		std::cout << "Success!!!\n";
 	}
 	catch (std::exception& ex) {
