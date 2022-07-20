@@ -1,6 +1,6 @@
 namespace Darcy {
 
 template<typename T>
-System<T>::System(VTB bound) : boundary(bound) {}
+System<T>::System(const VTB& bound) : boundary(bound) {}
 
 }

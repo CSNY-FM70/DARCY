@@ -1,56 +1,59 @@
+
 #include <iostream>
 #include <cassert>
-#include "FEM_system.hpp"
-#include "FEM_solver.hpp"
-#include "darcy_system_test.hpp"
 #include "darcy_system_well.hpp"
-#include "writeToCsv.cpp"
-#include "writeTo4Ddat.cpp"
+#include "Darcy.hpp"
 
 int main(int argc, const char* argv[]) {
 	// assert(argc==2);
-	using T = double;
-	const int gridpoints = 100;
-	const int nvtx = (gridpoints + 1) * (gridpoints + 1);
+	assert(argc == 6 && "Insert #samples,sigma(0.01-2),jet(-100 - 100) and l(0.1-0.9)->cov(r,l),Gridpoints(10-200)");
+	try {
+		using T = double;
+		if (atoi(argv[1]) < 1)
+			throw std::runtime_error("number of samples must be positive!");
+		int samples = atoi(argv[1]);
+		// 1. Create Darcy system boundaries and then the system
+		// 2. Create the linear solver, FEM system and FEM solver
+		// 3. Create the generator
+		// 4. Create the sampler
+		// 5. Run Monte Carlo sample
+		// 6. Return all the info
+		Darcy_Well::System<T>::VTB boundary;
+		boundary << 0, 1, 0, 1;
+		if (atof(argv[2]) < 0.01 || atof(argv[2]) > 2)
+			throw std::runtime_error("sigma must be between 0.01 and 2!");
+		T sigma = static_cast<T>(atof(argv[2]));
+		if (atof(argv[3]) < -100 || atof(argv[3]) > 100)
+			throw std::runtime_error("jet must be between -100 and 100!");
+		T jet = static_cast<T>(atof(argv[3]));
+		if (atof(argv[4]) < 0.1 || atof(argv[4]) > 0.9)
+			throw std::runtime_error("covariance parameter l must be between 0.1 and 0.9!");
+		T lcov = static_cast<T>(atof(argv[4]));
+		if (atoi(argv[5]) < 2 || atoi(argv[5]) > 300)
+			throw std::runtime_error("No less than 2 Gridpoint and if considerably more than 200 check available memory");
+		const int gridpoints = atoi(argv[5]);
+		Darcy_Well::System<T> dsys_well(boundary, sigma, jet, lcov);
+		std::cout << "Successfully created Darcy system\n" << std::endl;
+		FEM::System<T> femsys_well(dsys_well, gridpoints);
+		FEM::Solver<T> femsol;
+		std::cout << "FEM system and FEM solver instantieted\n";
+		bool deterministic = true;
+		GRF::Generator<T> generator_well(gridpoints, dsys_well, deterministic);
+		UQ::Sampler<T> sampler_well(samples, generator_well, femsys_well, femsol, gridpoints);
+		std::cout << "Starting Monte Carlo sample\n" << std::endl;
+		sampler_well.sample();
+		std::cout << "Successfully finished Monte Carlo sampling\n" << std::endl;
 
-	std::cout << "Creating boundaries and Darcy system" << std::endl;
-	Darcy_Test::System<T>::VTB boundary;
-	boundary << 0, 1, 0, 1;
-	//Darcy_Test::System<T> dsys(boundary);
-	Darcy_Well::System<T> dsys_well(boundary);
-	//std::cout << "Successfully created Darcy system" << std::endl;
-	T HI = 2.5;
-	T LO = -1.5;
-	T range = HI - LO;
-	typename Darcy::System<T>::MT perm(gridpoints + 1, gridpoints + 1);
-	perm = Darcy::System<T>::MT::Random(gridpoints + 1, gridpoints + 1);
-	perm = (perm + Eigen::MatrixXd::Constant(gridpoints + 1, gridpoints + 1, 1.)) * range / 2.;
-	perm = (perm + Eigen::MatrixXd::Constant(gridpoints + 1, gridpoints + 1, LO));
+		Eigen::Matrix<T, Eigen::Dynamic, 1> Sol = sampler_well.get_mean();
+		Eigen::Matrix<T, Eigen::Dynamic, 1> PM = femsys_well.get_PM();
 
-		std::cout << "FEM system and FEM solver\n";
-	//FEM::System<T,gridpoints> femsys(perm,dsys);
-	FEM::System<T, gridpoints> femsys_well(perm, dsys_well);
-	FEM::Solver<T, gridpoints> femsol;
-	// std::cout << "Successfully FEM system and FEM solver" << std::endl;
-		std::cout << "Setting up Galerkin System for "<< 2*gridpoints*gridpoints <<" Elements\n";
-	femsys_well.setup();
-		std::cout << "Solving Galerkin System with "<< nvtx << " Nodes\n";
-	femsol.solve(femsys_well);
-	
-	//Data for 2D Heatmaps
-	Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> temp_solution = femsys_well.get_p();
-	temp_solution.resize(gridpoints + 1, gridpoints + 1);
-	Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> solution = temp_solution.transpose();
-		std::cout << "Writing Data for 2D Heatmaps\n";
-	printMatrixToCsv<T>(solution, "solution_well.csv");
-	printMatrixToCsv<T>(femsys_well.get_PM(), "PM_well.csv");
-	
-	//Data for 3D Heatmaps
-	femsys_well.get_PM().resize(nvtx, 1);
-	Eigen::Matrix<T, Eigen::Dynamic, 1> Sol = femsys_well.get_p();
-	Eigen::Matrix<T, Eigen::Dynamic, 1> PM = femsys_well.get_PM();
+		//Data for 3D Heatmaps
 		std::cout << "Writing Data for 4D Heatmap\n";
-	printToDat<T, gridpoints>(Sol, PM, "4DMapping.dat");
-	std::cout << "Success!!!\n";
+		printToDat<T>(gridpoints+1,Sol, PM, "4DMapping.dat");
+		std::cout << "Success!!!\n";
+	}
+	catch (std::exception& ex) {
+		std::cout << ex.what() << std::endl;
+	}
 	return 0;
 }

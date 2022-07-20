@@ -1,3 +1,5 @@
+// Software Lab CES 2020
+
 #include "FEM_system.hpp"
 #include <Eigen/Dense>
 #include <Eigen/SparseCore>
@@ -9,10 +11,10 @@ namespace FEM {
 
 /**
 * @brief This class aims to solve the FEM System using a Conjugate Gradient Solver.
+* @date 2020
 * @tparam T Base type to be used for computations.
-* @tparam K Number of 1D-gridpoints in discretized system.
 */
-template<typename T,int K>
+template<typename T>
 class Solver{
 private:
 	Eigen::ConjugateGradient<Eigen::SparseMatrix<T>,Eigen::Lower|Eigen::Upper> CG;
@@ -26,7 +28,7 @@ public:
 	* @brief solve Solves discretized system.
 	* @param femsys An object of type FEM system to be solved.
 	*/
-	void solve(System<T,K>&);
+	void solve(System<T>& femsys);
 };
 
 }

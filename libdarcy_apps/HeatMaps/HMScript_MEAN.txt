@@ -1,0 +1,13 @@
+set terminal pngcairo enhanced fontscale 1.0 size 800, 800 
+set output 'heatmap_MEAN_NO_SOURCE.png' 
+set title "Mean Darcy Pressure" font "arial,18"
+
+#The value next to label 1.0 should equal K!!-------------------
+set autoscale yfix
+set ytics ("0.0" 0,"1.0" 100) font "arial,14"
+set autoscale xfix
+set xtics ("0.0" 0,"1.0" 100) font "arial,14"
+set palette defined (0 0 0 0.5, 1 0 0 1, 2 0 0.5 1, 3 0 1 1, 4 0.5 1 0.5, 5 1 1 0, 6 1 0.5 0, 7 1 0 0, 8 0.5 0 0)
+set pm3d map
+set datafile separator ','
+splot 'mean_no_source.csv' matrix with image notitle

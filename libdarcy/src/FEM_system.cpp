@@ -1,15 +1,15 @@
 namespace FEM {
-
-template<typename T,int K>
-System<T,K>::System(typename Darcy::System<T>::MT& field, typename Darcy::System<T>& dsy)
-	:_dsy(&dsy){
+template<typename T>
+System<T>::System(typename Darcy::System<T>::MT& field, typename Darcy::System<T>& dsy, const int& gridpoints)
+	:_dsy(&dsy),ns(gridpoints-1){
 		field_to_perm(field);
 }
-
-template<typename T,int K>
-//void System<T,K>::uniform_mesh(typename Darcy::System<T>::VT& xv, typename Darcy::System<T>::VT& yv, Eigen::Matrix<int,Eigen::Dynamic,Eigen::Dynamic>& elt2vert){
-void System<T,K>::uniform_mesh(std::vector<T>& xv, std::vector<T>& yv, std::vector<std::vector<int>>& elt2vert){
-	const int ns = K;
+template<typename T>
+System<T>::System(typename Darcy::System<T>& dsy, const int& gridpoints)
+	:_dsy(&dsy),ns(gridpoints-1){
+}
+template<typename T>
+void System<T>::uniform_mesh(std::vector<T> & xv, std::vector<T> & yv, std::vector<std::vector<int>> & elt2vert) {
 	T h=1.0/ns;
 
 	//Discretize axises such that they follow global indexing system
@@ -20,15 +20,13 @@ void System<T,K>::uniform_mesh(std::vector<T>& xv, std::vector<T>& yv, std::vect
 			xv.at(i*(ns+1)+j) = j*h;
 			yv.at(i*(ns+1)+j) = i*h;
 		}
-	/*for(size_t i=0;i<nvtx;i++)std::cout << xv.at(i) <<"\t"<< yv.at(i)<<std::endl;
-	std::cout << std::endl;*/
 
 	const int ne = 2*ns*ns;
 
 	//Global indexing system
 	std::vector<std::vector<int>> vv(ns+1,std::vector<int>(ns+1));
 	std::vector<std::vector<int>> v1(ns,std::vector<int>(ns)), v2(ns,std::vector<int>(ns)), v3(ns,std::vector<int>(ns)), v4(ns,std::vector<int>(ns));
-	
+
 	typename std::vector<std::vector<int>>::iterator row;
 	typename std::vector<int>::iterator col;
 
@@ -64,15 +62,9 @@ void System<T,K>::uniform_mesh(std::vector<T>& xv, std::vector<T>& yv, std::vect
 				i++;
 			}
 	}
-	/*for(row=elt2vert.begin();row!=elt2vert.end();row++){
-		for(col=row->begin();col!=row->end();col++)std::cout <<*col<<"\t";
-		std::cout << std::endl;
-	}*/
 }
-
-template<typename T,int K>
-void System<T,K>::setup(){
-	const int ns = K;
+template<typename T>
+void System<T>::setup(){
 	const int nvtx=(ns+1)*(ns+1), ne=2*ns*ns;
 	T h=1.0/ns;
 	std::vector<T> xv, yv;
@@ -83,20 +75,17 @@ void System<T,K>::setup(){
 	//Derivatives of reference element's basis functions
 	std::vector<int> dpsi_ds(3), dpsi_dt(3);
 	dpsi_ds.at(0)=-1; dpsi_ds.at(1)=1; dpsi_ds.at(2)=0;
-	dpsi_dt.at(0)=-1; dpsi_dt.at(1)=0; dpsi_dt.at(2)=1; 
+	dpsi_dt.at(0)=-1; dpsi_dt.at(1)=0; dpsi_dt.at(2)=1;
 
-	//Piecewise constant data	
+	//Piecewise constant data
 	std::vector<T> const_a(ne), const_f(ne);
 	PM.resize(nvtx,1);
 	//Permeability coefficient for each element from GRF.generate
 	for(int i=0;i<ne;i++){
 		T sum = PM(elt2vert.at(i).at(0)-1)+PM(elt2vert.at(i).at(1)-1)+PM(elt2vert.at(i).at(2)-1);
 		const_a.at(i) = (1.0/3.0)*sum;
-	}PM.resize(ns + 1, ns + 1);
-	/*std::cout << "Const a() \n";
-	for(size_t i=0;i<ne;i++)std::cout << const_a.at(i) << std::endl;
-	std::cout << std::endl;*/
-	
+	}
+
 	//Source term for each element
 	for(int i=0;i<ne;i++){
 		typename Darcy::System<T>::VTX x;
@@ -107,12 +96,9 @@ void System<T,K>::setup(){
 			sum += _dsy->f(x);
 		}
 		const_f.at(i) = (1.0/3.0) * sum;
-	}
-	/*std::cout << "Const f() \n";
-	for(size_t i=0;i<ne;i++)std::cout << const_f.at(i) << std::endl;
-	std::cout <<std::endl;*/
+	}PM.resize(ns+1,ns+1);
 
-	//Element arrays for piecewise linear finite elements	
+	//Element arrays for piecewise linear finite elements
 	std::vector<std::vector<std::vector<T>>> Aks(ne,std::vector<std::vector<T>>(3,std::vector<T>(3)));
 	std::vector<std::vector<T>> bks(ne,std::vector<T>(3));
 	std::vector<int> delta(ne);
@@ -124,15 +110,9 @@ void System<T,K>::setup(){
 				delta.at(k) = (ns*dpsi_ds.at(i))*(ns*dpsi_ds.at(j)) + (ns*dpsi_dt.at(i))*(ns*dpsi_dt.at(j));
 				delta.at(k+ne/2) = (-ns*dpsi_ds.at(i))*(-ns*dpsi_ds.at(j)) + (-ns*dpsi_dt.at(i))*(-ns*dpsi_dt.at(j));
 				//Adding permeability
-				Aks.at(k).at(i).at(j) = detJks*const_a.at(k)*delta.at(k)/2; 
+				Aks.at(k).at(i).at(j) = detJks*const_a.at(k)*delta.at(k)/2;
 				Aks.at(k+ne/2).at(i).at(j) = detJks*const_a.at(k+ne/2)*delta.at(k+ne/2)/2;
 			}
-	/*std::cout << "Aks \n"; 
-	for(size_t i=0;i<ne;i++){
-		std::cout << Aks.at(i).at(0).at(0) << "\t" << Aks.at(i).at(0).at(1) << "\t" << Aks.at(i).at(0).at(2) << std::endl;
-		std::cout << Aks.at(i).at(1).at(0) << "\t" << Aks.at(i).at(1).at(1) << "\t" << Aks.at(i).at(1).at(2) << std::endl;
-		std::cout << Aks.at(i).at(2).at(0) << "\t" << Aks.at(i).at(2).at(1) << "\t" << Aks.at(i).at(2).at(2) << std::endl;
-	}std::cout << std::endl;*/
 
 	//RHS for each elements vertices
 	for(size_t i=0;i<ne;i++){
@@ -140,11 +120,6 @@ void System<T,K>::setup(){
 		bks.at(i).at(1) += const_f.at(i)*(detJks/6);
 		bks.at(i).at(2) += const_f.at(i)*(detJks/6);
 	}
-	/*std::cout << "bks \n";
-	for(size_t i=0;i<ne;i++)
-		std::cout << bks.at(i).at(0) << "\t" << bks.at(i).at(1) << "\t" << bks.at(i).at(2) << std::endl;
-	std::cout << std::endl;*/
-
 
 	//Building Galerkin System from element arrays using global indexing
 	std::vector<std::vector<T>> A(nvtx,std::vector<T>(nvtx));
@@ -154,16 +129,10 @@ void System<T,K>::setup(){
 			for(size_t k=0;k<ne;k++) A.at(elt2vert.at(k).at(i)-1).at(elt2vert.at(k).at(j)-1) += Aks.at(k).at(i).at(j);
 		for(size_t l=0;l<ne;l++) b.at(elt2vert.at(l).at(i)-1) += bks.at(l).at(i);
 	}
-	/*std::cout << "A \n";
-	for(size_t i=0;i<nvtx;i++){
-		for(size_t j=0;j<nvtx;j++)std::cout << A.at(i).at(j) << "\t";
-		std::cout << std::endl;
-	}std::cout << std::endl;
-	std::cout << "b \n";
-	for(size_t i=0;i<nvtx;i++)std::cout << b.at(i) << std::endl;
-	std::cout << std::endl;*/
 
 	//Isolating boundary and interior nodes
+	std::vector<int> boundary;
+	std::vector<int> interior;
 	static int current_index = 0;
 	boundary.resize((ns+1)*2);
 	while(current_index < (ns+1)*2){
@@ -174,9 +143,6 @@ void System<T,K>::setup(){
 			}
 		}
 	}current_index=0;
-	/*std::cout << "Boundary Nodes \n";
-	for(size_t i=0;i<(ns+1)*2;i++)std::cout << boundary.at(i) << std::endl;
-	std::cout << std::endl;*/
 
 	std::vector<int> _interior(nvtx);
 	for(size_t i=0;i<nvtx;i++){
@@ -191,10 +157,7 @@ void System<T,K>::setup(){
 			interior.push_back(_interior.at(i));
 			current_index++;
 		}
-	}current_index = 0; 
-	/*std::cout << "Interior Nodes \n";
-	for(size_t i=0;i<interior.size();i++)std::cout << interior.at(i) << std::endl;
-	std::cout << std::endl;*/
+	}current_index = 0;
 
 	//Building Linear System to be solved - A_int*u_int = b_int - AD_ib*DwB
 	const int n_int = (ns-1)*(ns+1);
@@ -211,8 +174,8 @@ void System<T,K>::setup(){
 				tripletList.push_back(Eigen::Triplet<T>(i,j,A.at(interior.at(i)).at(interior.at(j))));
 			}
 		}
-	Eigen::SparseMatrix<T> A_int(n_int,n_int);
-	A_int.setFromTriplets(tripletList.begin(), tripletList.end());
+	System_Matrix.resize(n_int, n_int);
+	System_Matrix.setFromTriplets(tripletList.begin(), tripletList.end());
 
 	std::vector<std::vector<T>> A_ib(n_int,std::vector<T>((ns+1)*2));
 	for(size_t i=0;i<n_int;i++)
@@ -229,46 +192,32 @@ void System<T,K>::setup(){
 	xv.resize(0); yv.resize(0);
 
 	//Building right hand side of Linear System
-	Eigen::Matrix<T,Eigen::Dynamic,1> Drhs = Eigen::Matrix<T,n_int,1>::Zero();
+	System_RHS = Darcy::System<T>::VT::Zero(n_int);
 	for(size_t i=0;i<n_int;i++){
-		for(size_t k=0;k<(ns+1)*2;k++) Drhs(i) += A_ib.at(i).at(k)*bound_data.at(k);
-		Drhs(i) = b_int.at(i) - Drhs(i);
+		for(size_t k=0;k<(ns+1)*2;k++) System_RHS(i) += A_ib.at(i).at(k)*bound_data.at(k);
+		System_RHS(i) = b_int.at(i) - System_RHS(i);
 	}
 	b_int.resize(0);
-
-	//std::cout << "A_int \n" << A_int << "\n\n";
-	//std::cout << "Drhs \n" << Drhs << "\n\n";
-	
-	get_A() = A_int;
-	get_b() = Drhs;
 }
-
-template<typename T,int K>
-void System<T,K>::field_to_perm(typename Darcy::System<T>::MT& _field) {
-	//TODO -> Check Book
+template<typename T>
+void System<T>::field_to_perm(typename Darcy::System<T>::MT & _field){
 	PM = (exp(_field.array())).matrix();
-	//PM = _field;
-	//std::cout << "Permeability Check \n" << PM << "\n\n";
-	//PM = _field;
+	//std::cout << "PERMEABILTY \n" << PM << "\n\n";
 }
-
-template<typename T, int K>
-Eigen::SparseMatrix<T>& System<T,K>::get_A(){
+template<typename T>
+Eigen::SparseMatrix<T>& System<T>::get_A(){
 	return System_Matrix;
 }
-
-template<typename T,int K>
- typename Darcy::System<T>::VT& System<T,K>::get_p(){
+template<typename T>
+ typename Darcy::System<T>::VT& System<T>::get_p() {
 	 return p;
  }
-
-template<typename T, int K>
-typename Darcy::System<T>::VT& System<T,K>::get_b(){
+ template<typename T>
+typename Darcy::System<T>::VT& System<T>::get_b() {
 	return System_RHS;
 }
-
-template<typename T,int K>
-typename Darcy::System<T>::MT& System<T, K>::get_PM() {
+template<typename T>
+typename Darcy::System<T>::MT& System<T>::get_PM() {
 	return PM;
 }
 
