@@ -1,7 +1,7 @@
 EXE=$(addsuffix .exe, $(basename $(wildcard *.cpp)))
 CPPC=g++
 CPPC_FLAGS=-g -Wall -Wextra -pedantic -Ofast -march=native -std=c++11
-EIGEN_DIR=$(HOME)/Software/Eigen
+EIGEN_DIR=$(HOME)/Software/include/Eigen
 
 BASE_DIR=..
 LIBDARCY_INC_DIR=$(BASE_DIR)/libdarcy/include
