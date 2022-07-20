@@ -44,7 +44,7 @@ int main(int argc, const char* argv[]) {
 		sampler_well.sample();
 		std::cout << "Successfully finished Monte Carlo sampling\n" << std::endl;
 
-		nvtx = (gridpoints + 1.0) * (gridpoints + 1.0);
+		const int nvtx = (gridpoints + 1.0) * (gridpoints + 1.0);
 		Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> Sol = sampler_well.get_mean();
 		Sol.resize(nvtx, 1);
 		Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> PM = femsys_well.get_PM();
